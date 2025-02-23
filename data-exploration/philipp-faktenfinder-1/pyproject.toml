@@ -1,0 +1,16 @@
+[project]
+name = "py"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "jupyter>=1.1.1",
+    "lab>=8.4",
+    "lxml>=5.3.1",
+    "openai>=1.63.2",
+    "pandas>=2.2.3",
+    "pandas-stubs>=2.2.3.241126",
+    "pydantic>=2.10.6",
+    "requests>=2.32.3",
+]

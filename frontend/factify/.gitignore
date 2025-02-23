@@ -17,6 +17,7 @@ ios/
 linux/
 macos/
 web/
+windows
 
 assets/*
 

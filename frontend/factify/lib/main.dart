@@ -123,6 +123,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final CardSwiperController controller = CardSwiperController();
   Future<List<dynamic>>? _supaData;
 
   @override
@@ -180,30 +181,56 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Container(color: Colors.black),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 50, bottom: 50),
+                  margin: EdgeInsets.only(top: 50, bottom: 70),
                   child: Swiper(
                     factsContainer: factsContainer,
                     factsRaw: factsRaw,
+                    controller: controller,
                   ),
                 ),
-                // Positioned(
-                //   bottom: 40,
-                //   left: 0,
-                //   right: 0,
-                //   child: Center(
-                //     // Center horizontally
-                //     child: ElevatedButton(
-                //       onPressed: () {
-                //         Share.share('check out my website https://example.com');
-                //       },
-                //       style: ElevatedButton.styleFrom(
-                //         shape: const CircleBorder(),
-                //         padding: const EdgeInsets.all(30), // button size
-                //       ),
-                //       child: const Icon(Icons.share),
-                //     ),
-                //   ),
-                // ),
+                Positioned(
+                  bottom: 20,
+                  left: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment
+                            .center, // Center the buttons horizontally
+                    children: <Widget>[
+                      ElevatedButton(
+                        onPressed: () {
+                          controller.swipe(CardSwiperDirection.left);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(20), // button size
+                          iconColor: Colors.red.shade100,
+                          backgroundColor: Colors.red.shade600,
+                          shadowColor: Colors.transparent,
+                          elevation: 5,
+                        ),
+                        child: const Icon(Icons.close_rounded, size: 25),
+                      ),
+                      const SizedBox(
+                        width: 16.0,
+                      ), // Add spacing between buttons
+                      ElevatedButton(
+                        onPressed: () {
+                          controller.swipe(CardSwiperDirection.right);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(20), // button size
+                          iconColor: Colors.green.shade100,
+                          backgroundColor: Colors.green.shade600,
+                          shadowColor: Colors.transparent,
+                          elevation: 5,
+                        ),
+                        child: const Icon(Icons.check_rounded, size: 25),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           );
@@ -216,12 +243,19 @@ class _MyHomePageState extends State<MyHomePage> {
 class Swiper extends StatelessWidget {
   final List<dynamic> factsContainer;
   final List<dynamic> factsRaw;
+  final CardSwiperController controller;
 
-  Swiper({super.key, required this.factsContainer, required this.factsRaw});
+  Swiper({
+    super.key,
+    required this.factsContainer,
+    required this.factsRaw,
+    required this.controller,
+  });
 
   @override
   Widget build(BuildContext context) {
     return CardSwiper(
+      controller: controller,
       cardsCount: factsContainer.length,
       cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
         return factsContainer[index];

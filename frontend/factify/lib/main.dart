@@ -196,28 +196,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class MyDataWidget extends StatelessWidget {
-  final List<dynamic> data;
-
-  const MyDataWidget({super.key, required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      child: ListView.builder(
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          final item = data[index];
-          return ListTile(
-            title: Text(item['person'] ?? ''),
-            subtitle: Text(item['claim'] ?? ''),
-          );
-        },
-      ),
-    );
-  }
-}
-
 void _showMyDialog(context, data, direction) {
   final guessIsCorrect =
       direction == CardSwiperDirection.right && data['correct'] == true ||

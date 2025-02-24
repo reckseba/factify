@@ -39,6 +39,18 @@ Color getComplementaryTextColor(MaterialColor backgroundColor) {
   return luminance > 0.5 ? Colors.black : Colors.white;
 }
 
+void shareFact(factRaw) {
+  final text =
+      factRaw['person'] +
+      ' behauptete ' +
+      (factRaw['correct'] ? 'richtigerweise' : 'fälschlicherweise') +
+      ': ' +
+      factRaw['claim'] +
+      '\n\nErklärung: ' +
+      factRaw['explanation'];
+  Share.share(text);
+}
+
 Future<void> main() async {
   await Supabase.initialize(
     url: 'https://aqfdfftbmmfnpzeeigez.supabase.co',
@@ -98,10 +110,10 @@ class _MyHomePageState extends State<MyHomePage> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          final data = snapshot.data!;
+          final factsRaw = snapshot.data!;
 
-          List<Container> cards =
-              data.map((card) {
+          List<Container> factsContainer =
+              factsRaw.map((card) {
                 final bgColor = getRandomMaterialColor();
                 final textColor = getComplementaryTextColor(bgColor);
                 return Container(
@@ -123,28 +135,38 @@ class _MyHomePageState extends State<MyHomePage> {
           return Scaffold(
             body: Stack(
               children: [
-                Container(
-                  margin: EdgeInsets.only(bottom: 50),
-                  child: Swiper(cards: cards, data: data),
-                ),
                 Positioned(
-                  bottom: 40,
+                  top: 0,
                   left: 0,
                   right: 0,
-                  child: Center(
-                    // Center horizontally
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Share.share('check out my website https://example.com');
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(30), // button size
-                      ),
-                      child: const Icon(Icons.share),
-                    ),
+                  height: 30,
+                  child: Container(color: Colors.black),
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 50, bottom: 50),
+                  child: Swiper(
+                    factsContainer: factsContainer,
+                    factsRaw: factsRaw,
                   ),
                 ),
+                // Positioned(
+                //   bottom: 40,
+                //   left: 0,
+                //   right: 0,
+                //   child: Center(
+                //     // Center horizontally
+                //     child: ElevatedButton(
+                //       onPressed: () {
+                //         Share.share('check out my website https://example.com');
+                //       },
+                //       style: ElevatedButton.styleFrom(
+                //         shape: const CircleBorder(),
+                //         padding: const EdgeInsets.all(30), // button size
+                //       ),
+                //       child: const Icon(Icons.share),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           );
@@ -154,10 +176,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-void _showMyDialog(context, data, direction) {
+void _showMyDialog(context, factRaw, direction) {
   final guessIsCorrect =
-      direction == CardSwiperDirection.right && data['correct'] == true ||
-      direction == CardSwiperDirection.left && data['correct'] == false;
+      direction == CardSwiperDirection.right && factRaw['correct'] == true ||
+      direction == CardSwiperDirection.left && factRaw['correct'] == false;
 
   showDialog(
     context: context,
@@ -166,15 +188,16 @@ void _showMyDialog(context, data, direction) {
         title: Text(
           (guessIsCorrect ? 'Ja' : 'Nein') +
               ', diese Aussage ist ' +
-              (data['correct'] ? 'RICHTIG' : 'FALSCH'),
+              (factRaw['correct'] ? 'RICHTIG' : 'FALSCH'),
         ),
-        content: Text(data['person'] + '\n\n ' + data['explanation']),
+        content: Text(factRaw['person'] + '\n\n' + factRaw['explanation']),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close the dialog
+              shareFact(factRaw);
             },
-            child: Text('Cancel'),
+            child: Text('Share'),
           ),
           TextButton(
             onPressed: () {
@@ -191,20 +214,20 @@ void _showMyDialog(context, data, direction) {
 }
 
 class Swiper extends StatelessWidget {
-  final List<dynamic> cards;
-  final List<dynamic> data;
+  final List<dynamic> factsContainer;
+  final List<dynamic> factsRaw;
 
-  Swiper({super.key, required this.cards, required this.data});
+  Swiper({super.key, required this.factsContainer, required this.factsRaw});
 
   @override
   Widget build(BuildContext context) {
     return CardSwiper(
-      cardsCount: cards.length,
+      cardsCount: factsContainer.length,
       cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
-        return cards[index];
+        return factsContainer[index];
       },
       onSwipe: (previousIndex, currentIndex, direction) {
-        _showMyDialog(context, data[previousIndex], direction);
+        _showMyDialog(context, factsRaw[previousIndex], direction);
         return true;
       },
     );

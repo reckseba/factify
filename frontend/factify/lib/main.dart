@@ -28,9 +28,6 @@ MaterialColor getRandomMaterialColor() {
     Colors.amber,
     Colors.orange,
     Colors.deepOrange,
-    Colors.brown,
-    Colors.grey,
-    Colors.blueGrey,
   ];
   return materialColors[random.nextInt(materialColors.length)];
 }

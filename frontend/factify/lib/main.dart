@@ -51,6 +51,43 @@ void shareFact(factRaw) {
   Share.share(text);
 }
 
+void showSolution(context, factRaw, direction) {
+  final guessIsCorrect =
+      direction == CardSwiperDirection.right && factRaw['correct'] == true ||
+      direction == CardSwiperDirection.left && factRaw['correct'] == false;
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          (guessIsCorrect ? 'Ja' : 'Nein') +
+              ', diese Aussage ist ' +
+              (factRaw['correct'] ? 'RICHTIG' : 'FALSCH'),
+        ),
+        content: Text(factRaw['person'] + '\n\n' + factRaw['explanation']),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+              shareFact(factRaw);
+            },
+            child: Text('Share'),
+          ),
+          TextButton(
+            onPressed: () {
+              // Perform action and close the dialog
+              Navigator.of(context).pop();
+              // ... your callback logic here ...
+            },
+            child: Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 Future<void> main() async {
   await Supabase.initialize(
     url: 'https://aqfdfftbmmfnpzeeigez.supabase.co',
@@ -176,43 +213,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-void _showMyDialog(context, factRaw, direction) {
-  final guessIsCorrect =
-      direction == CardSwiperDirection.right && factRaw['correct'] == true ||
-      direction == CardSwiperDirection.left && factRaw['correct'] == false;
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(
-          (guessIsCorrect ? 'Ja' : 'Nein') +
-              ', diese Aussage ist ' +
-              (factRaw['correct'] ? 'RICHTIG' : 'FALSCH'),
-        ),
-        content: Text(factRaw['person'] + '\n\n' + factRaw['explanation']),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-              shareFact(factRaw);
-            },
-            child: Text('Share'),
-          ),
-          TextButton(
-            onPressed: () {
-              // Perform action and close the dialog
-              Navigator.of(context).pop();
-              // ... your callback logic here ...
-            },
-            child: Text('OK'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
 class Swiper extends StatelessWidget {
   final List<dynamic> factsContainer;
   final List<dynamic> factsRaw;
@@ -227,7 +227,7 @@ class Swiper extends StatelessWidget {
         return factsContainer[index];
       },
       onSwipe: (previousIndex, currentIndex, direction) {
-        _showMyDialog(context, factsRaw[previousIndex], direction);
+        showSolution(context, factsRaw[previousIndex], direction);
         return true;
       },
     );

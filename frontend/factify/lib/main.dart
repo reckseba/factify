@@ -141,7 +141,6 @@ class _MyHomePageState extends State<MyHomePage> {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           final data = snapshot.data!;
-          // print(data);
 
           List<Container> cards =
               data.map((card) {
@@ -208,14 +207,9 @@ class MyDataWidget extends StatelessWidget {
       child: ListView.builder(
         itemCount: data.length,
         itemBuilder: (context, index) {
-          print("-------------------------------\n\n");
-
-          final item = data[index]; // Access each item in the array
-
+          final item = data[index];
           return ListTile(
-            title: Text(
-              item['person'] ?? '',
-            ), // Access properties of the object
+            title: Text(item['person'] ?? ''),
             subtitle: Text(item['claim'] ?? ''),
           );
         },
@@ -225,13 +219,9 @@ class MyDataWidget extends StatelessWidget {
 }
 
 void _showMyDialog(context, data, direction) {
-  print(data);
-
   final guessIsCorrect =
       direction == CardSwiperDirection.right && data['correct'] == true ||
       direction == CardSwiperDirection.left && data['correct'] == false;
-
-  print(guessIsCorrect);
 
   showDialog(
     context: context,
@@ -278,9 +268,6 @@ class Swiper extends StatelessWidget {
         return cards[index];
       },
       onSwipe: (previousIndex, currentIndex, direction) {
-        print(previousIndex);
-        print(currentIndex);
-        print(direction);
         _showMyDialog(context, data[previousIndex], direction);
         return true;
       },

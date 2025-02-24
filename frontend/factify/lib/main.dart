@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:share_plus/share_plus.dart';
 
 MaterialColor getRandomMaterialColor() {
   // Generate a random hue value (0-360).
@@ -138,19 +139,49 @@ class _MyHomePageState extends State<MyHomePage> {
                 final bgColor = getRandomMaterialColor();
                 final textColor = getComplementaryTextColor(bgColor);
                 return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: bgColor,
+                  ),
                   alignment: Alignment.center,
-                  color: bgColor,
-                  child: Center(
-                    child: Text(
-                      card['claim'] ?? '',
-                      style: TextStyle(color: textColor, fontSize: 50),
-                      textAlign: TextAlign.center,
-                    ),
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    card['claim'] ?? '',
+                    style: TextStyle(color: textColor, fontSize: 40),
+                    textAlign: TextAlign.center,
+                    softWrap: true,
                   ),
                 );
               }).toList();
 
-          return Swiper(cards: cards);
+          return Scaffold(
+            body: Stack(
+              children: [
+                Container(
+                  margin: EdgeInsets.only(bottom: 50),
+                  child: Swiper(cards: cards),
+                ),
+                Positioned(
+                  bottom: 40,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    // Center horizontally
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Share.share('check out my website https://example.com');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(30), // button size
+                      ),
+                      child: const Icon(Icons.share),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
         }
       },
     );
@@ -191,19 +222,11 @@ class Swiper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("factify"),
-      ),
-      body: Center(
-        child: CardSwiper(
-          cardsCount: cards.length,
-          cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
-            return cards[index];
-          },
-        ),
-      ),
+    return CardSwiper(
+      cardsCount: cards.length,
+      cardBuilder: (context, index, percentThresholdX, percentThresholdY) {
+        return cards[index];
+      },
     );
   }
 }

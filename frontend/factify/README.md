@@ -6,7 +6,6 @@ A new Flutter project.
 
 Asuming you have flutter, android sdk up and running.
 
-- Run `flutter create .`
 - Run `flutter run` and choose your environment
 
 If you want to emulate an Android device:

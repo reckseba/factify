@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -75,22 +74,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Future<List<dynamic>>? _jsonData;
   Future<List<dynamic>>? _supaData;
 
   @override
   void initState() {
     super.initState();
-    _jsonData = _loadJsonData();
     _supaData = _loadSupaData();
-  }
-
-  Future<List<dynamic>> _loadJsonData() async {
-    final String jsonString = await rootBundle.loadString(
-      'assets/relevante-personen.json',
-    ); // Load from assets
-    final List<dynamic> jsonData = jsonDecode(jsonString);
-    return jsonData;
   }
 
   Future<List<dynamic>> _loadSupaData() async {
@@ -102,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<dynamic>>(
-      future: _supaData, //_jsonData
+      future: _supaData,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
